@@ -1,0 +1,33 @@
+name: Run Flight Bot
+
+on:
+  schedule:
+    # 香港時間每日 09:00 同 21:00（GitHub Actions 用 UTC）
+    # 09:00 HKT = 01:00 UTC
+    # 21:00 HKT = 13:00 UTC
+    - cron: "0 1,13 * * *"
+  workflow_dispatch:
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    env:
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run bot
+        run: python test.py
