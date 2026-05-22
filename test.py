@@ -10,12 +10,12 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
 SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "").strip()
 
 DEPARTURE_ID = "HKG"
-ARRIVAL_ID = "NRT"
 DATE_PAIRS = [
-    ("2026-06-15", "2026-06-20"),
-    ("2026-07-10", "2026-07-15"),
-    ("2026-08-14", "2026-08-19"),
+    ("2026-07-03", "2026-07-06"),
+    ("2026-07-17", "2026-07-20"),
+    ("2026-07-24", "2026-07-27"),
 ]
+ARRIVAL_AIRPORTS = ["BKK", "DMK"]
 
 
 def to_number(value):
@@ -69,12 +69,12 @@ def find_lowest_roundtrip(data):
     return min(candidates, key=lambda x: x["price_value"])
 
 
-def fetch_google_flights(outbound_date, return_date):
+def fetch_google_flights(outbound_date, return_date, arrival_airport):
     url = "https://serpapi.com/search.json"
     params = {
         "engine": "google_flights",
         "departure_id": DEPARTURE_ID,
-        "arrival_id": ARRIVAL_ID,
+        "arrival_id": arrival_airport,
         "outbound_date": outbound_date,
         "return_date": return_date,
         "currency": "HKD",
@@ -132,12 +132,27 @@ def validate_env():
         raise RuntimeError(f"缺少環境變數: {joined}")
 
 
+def find_lowest_across_airports(outbound_date, return_date):
+    airport_candidates = []
+
+    for arrival_airport in ARRIVAL_AIRPORTS:
+        data = fetch_google_flights(outbound_date, return_date, arrival_airport)
+        best = find_lowest_roundtrip(data)
+        if not best:
+            continue
+        best["arrival_airport"] = arrival_airport
+        airport_candidates.append(best)
+
+    if not airport_candidates:
+        return None
+    return min(airport_candidates, key=lambda x: x["price_value"])
+
+
 def main():
     validate_env()
 
     for outbound_date, return_date in DATE_PAIRS:
-        data = fetch_google_flights(outbound_date, return_date)
-        best = find_lowest_roundtrip(data)
+        best = find_lowest_across_airports(outbound_date, return_date)
 
         if not best:
             print(f"{outbound_date} 至 {return_date}: 未找到可比較的價格資料，保持安靜")
@@ -157,11 +172,12 @@ def main():
             write_last_price(price_file, latest_price)
             message = (
                 "機票降價通知！\n"
-                f"路線: {DEPARTURE_ID} -> {ARRIVAL_ID}\n"
+                f"路線: {DEPARTURE_ID} -> {best['arrival_airport']}\n"
                 f"日期: {outbound_date} 至 {return_date}\n"
                 f"舊價錢: {format_hkd(old_price)}\n"
                 f"新價錢: {best['price_raw']}\n"
                 f"便宜了: {format_hkd(cheaper_amount)}\n"
+                f"機場: {best['arrival_airport']}\n"
                 f"航空公司: {best['airline']}\n"
                 f"平台: {best['platform']}"
             )
