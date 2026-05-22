@@ -1,11 +1,8 @@
 name: Run Flight Bot
 
 on:
-  schedule:
-    # 香港時間每日 09:00 同 21:00（GitHub Actions 用 UTC）
-    # 09:00 HKT = 01:00 UTC
-    # 21:00 HKT = 13:00 UTC
-    - cron: "0 1,13 * * *"
+schedule:
+    - cron: '0 0,3,6,9,12,15 * * *'
   workflow_dispatch:
 
 jobs:
