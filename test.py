@@ -23,7 +23,7 @@ def send_telegram(msg):
     res = requests.post(url, json={"chat_id": CHAT_ID, "text": msg, "parse_mode": "Markdown"})
     return res.status_code == 200
 
-# ==================== 任務 A：泰國曼谷監測邏輯（安穩保留） ====================
+# ==================== 任務 A：泰國曼谷監測邏輯 ====================
 def check_thailand():
     print("🛫 泰國雙機場密集降價雷達啟動...")
     th_combos = [
@@ -68,7 +68,8 @@ def check_thailand():
                 print(f"查詢泰國 {apt} 失敗: {e}")
                 
         if best_flight:
-            price_file = f"last_price_th_{out_date}.txt"
+            # 💡 【秘技】直接加上 _force，強行打破雲端舊紀錄限制！
+            price_file = f"last_price_th_{out_date}_force.txt"
             old_price = None
             if os.path.exists(price_file):
                 with open(price_file, "r") as f:
@@ -87,11 +88,10 @@ def check_thailand():
             else:
                 print(f"泰國 {out_date} 價格未變，保持安靜。")
 
-# ==================== 任務 B：台東雙城大連線監測邏輯（校正回歸：東京 TYO 版！） ====================
+# ==================== 任務 B：台東雙城大連線監測邏輯 ====================
 def check_taiwan_tokyo():
     print("💒 10月台東婚禮度假特工啟動...")
     
-    # 定義 3 段航程（回歸東京 TYO）
     legs = [
         {"id": "leg1", "name": "1. 💒 飲衫首航：香港 (HKG) ➡️ 台北 (TPE)", "dep": "HKG", "arr": "TPE", "date": "2026-10-24", "morning_only": True},
         {"id": "leg2", "name": "2. 🗼 東京度假：台北 (TPE) ➡️ 東京 (TYO)", "dep": "TPE", "arr": "TYO", "date": "2026-10-25", "morning_only": False},
@@ -112,7 +112,7 @@ def check_taiwan_tokyo():
             "currency": "HKD",
             "hl": "zh-tw",
             "gl": "hk",
-            "type": "2", # 2 代表單程
+            "type": "2", 
             "api_key": SERPAPI_KEY
         }
         
@@ -124,7 +124,6 @@ def check_taiwan_tokyo():
             leg_best = None
             
             for f in flights:
-                # 嚴格篩選：10月24號去台北，強迫只要「日頭（16:00前出發）」嘅航班
                 if leg["morning_only"]:
                     dep_time = f.get("flights", [{}])[0].get("departure_time", "")
                     if "下午" in dep_time or "PM" in dep_time or "晚上" in dep_time:
@@ -150,7 +149,8 @@ def check_taiwan_tokyo():
             all_legs_success = False
 
     if all_legs_success and total_trip_price > 0:
-        price_file = "last_price_taiwan_tokyo.txt"
+        # 💡 【秘技】同樣加上 _force 檔案字尾，強行刷新雲端紀錄！
+        price_file = "last_price_taiwan_tokyo_force.txt"
         old_total = None
         if os.path.exists(price_file):
             with open(price_file, "r") as f:
@@ -172,5 +172,5 @@ def check_taiwan_tokyo():
             print("台東連線總價未變或上升，保持安靜。")
 
 if __name__ == "__main__":
-    check_thailand()    # 泰國繼續跑 
-    check_taiwan_tokyo() # 東京新上線
+    check_thailand()    
+    check_taiwan_tokyo()
