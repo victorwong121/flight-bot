@@ -15,16 +15,6 @@ TOKEN = os.environ["TELEGRAM_TOKEN"]
 CHAT_ID = os.environ["CHAT_ID"] if "CHAT_ID" in os.environ else os.environ["TELEGRAM_CHAT_ID"]
 SERPAPI_KEY = os.environ["SERPAPI_KEY"]
 
-# 2. 設定監測目標：泰國曼谷雙機場（BKK & DMK）
-DEPARTURE = "HKG"
-# 我們定義 3 個黃金 4日3夜 組合
-FLIGHT_COMBOS = [
-    {"outbound": "2026-07-03", "return": "2026-07-06"},
-    {"outbound": "2026-07-17", "return": "2026-07-20"},
-    {"outbound": "2026-07-24", "return": "2026-07-27"}
-]
-AIRPORTS = ["BKK", "DMK"]
-
 def format_hkd(val):
     return f"${val:,.0f} HKD" if val else "未知"
 
@@ -33,22 +23,27 @@ def send_telegram(msg):
     res = requests.post(url, json={"chat_id": CHAT_ID, "text": msg, "parse_mode": "Markdown"})
     return res.status_code == 200
 
-def check_flights():
+# ==================== 任務 A：泰國曼谷監測邏輯（安穩保留） ====================
+def check_thailand():
     print("🛫 泰國雙機場密集降價雷達啟動...")
+    th_combos = [
+        {"outbound": "2026-07-03", "return": "2026-07-06"},
+        {"outbound": "2026-07-17", "return": "2026-07-20"},
+        {"outbound": "2026-07-24", "return": "2026-07-27"}
+    ]
+    airports = ["BKK", "DMK"]
     
-    for combo in FLIGHT_COMBOS:
+    for combo in th_combos:
         out_date = combo["outbound"]
         ret_date = combo["return"]
-        
         lowest_price = float('inf')
         best_flight = None
         
-        # 同時掃描 BKK 和 DMK
-        for apt in AIRPORTS:
+        for apt in airports:
             url = "https://serpapi.com/search"
             params = {
                 "engine": "google_flights",
-                "departure_id": DEPARTURE,
+                "departure_id": "HKG",
                 "arrival_id": apt,
                 "outbound_date": out_date,
                 "return_date": ret_date,
@@ -57,11 +52,9 @@ def check_flights():
                 "gl": "hk",
                 "api_key": SERPAPI_KEY
             }
-            
             try:
                 response = requests.get(url, params=params).json()
                 flights = response.get("best_flights", []) + response.get("other_flights", [])
-                
                 for f in flights:
                     p = f.get("price")
                     if p and p < lowest_price:
@@ -69,56 +62,115 @@ def check_flights():
                         best_flight = {
                             "price_raw": p,
                             "airport": apt,
-                            "airline": f.get("flights", [{}])[0].get("airline", "未知航空"),
-                            "platform": "Google Flights"
+                            "airline": f.get("flights", [{}])[0].get("airline", "未知航空")
                         }
             except Exception as e:
-                print(f"查詢 {apt} 失敗: {e}")
-        
+                print(f"查詢泰國 {apt} 失敗: {e}")
+                
         if best_flight:
-            # 檔案紀錄命名，加上機場區分
-            price_file = f"last_price_{out_date}_{ret_date}.txt"
+            price_file = f"last_price_th_{out_date}.txt"
             old_price = None
             if os.path.exists(price_file):
                 with open(price_file, "r") as f:
                     try: old_price = float(f.read().strip())
                     except: pass
             
-            # 第一次跑，強迫發送通知，打破「保持安靜」魔咒！
-            if old_price is None:
+            if old_price is None or lowest_price < old_price:
                 with open(price_file, "w") as f:
                     f.write(str(lowest_price))
                 
-                message = (
-                    f"🔔 泰國雙機場動態首報！\n\n"
-                    f"📅 日期：{out_date} 至 {ret_date}\n"
-                    f"✈️ 航線：香港 (HKG) -> 曼谷 ({best_flight['airport']})\n"
-                    f"💵 當前最低價：{format_hkd(lowest_price)}\n"
-                    f"🏨 航空公司：{best_flight['airline']}\n"
-                    f"🔍 🔎 機械人已開始為你 24 小時死守此日子！"
-                )
-                send_telegram(message)
-                print(f"{out_date} 初始紀錄已建立，已強制發送 Telegram 通知！")
-                
-            elif lowest_price < old_price:
-                cheaper = old_price - lowest_price
-                with open(price_file, "w") as f:
-                    f.write(str(lowest_price))
-                    
-                message = (
-                    f"🔥 ✈️ 泰國機票降價大警告！！！\n\n"
-                    f"📅 日期：{out_date} 至 {ret_date}\n"
-                    f"✈️ 航線：香港 (HKG) -> 曼谷 ({best_flight['airport']})\n"
-                    f"📉 舊價錢：{format_hkd(old_price)}\n"
-                    f"💥 新價錢：{format_hkd(lowest_price)}\n"
-                    f"🎉 慳咗：{format_hkd(cheaper)}\n"
-                    f"🏨 航空公司：{best_flight['airline']}\n"
-                    f"👉 快啲去搶飛啦！"
-                )
-                send_telegram(message)
-                print(f"{out_date} 發現降價，已發送報警通知！")
+                if old_price is None:
+                    msg = f"🔔 泰國雙機場動態首報！\n\n📅 日期：{out_date} 至 {ret_date}\n✈️ 航線：香港 -> 曼谷 ({best_flight['airport']})\n💵 最低價：{format_hkd(lowest_price)}\n🏨 航空：{best_flight['airline']}"
+                else:
+                    msg = f"🔥 泰國機票降價大警告！！！\n\n📅 日期：{out_date} 至 {ret_date}\n✈️ 航線：香港 -> 曼谷 ({best_flight['airport']})\n📉 舊價：{format_hkd(old_price)} -> 💥 新價：{format_hkd(lowest_price)}\n🏨 航空：{best_flight['airline']}"
+                send_telegram(msg)
             else:
-                print(f"{out_date} 價格未變或上升，保持安靜。")
+                print(f"泰國 {out_date} 價格未變，保持安靜。")
+
+# ==================== 任務 B：台東雙城大連線監測邏輯（校正回歸：東京 TYO 版！） ====================
+def check_taiwan_tokyo():
+    print("💒 10月台東婚禮度假特工啟動...")
+    
+    # 定義 3 段航程（回歸東京 TYO）
+    legs = [
+        {"id": "leg1", "name": "1. 💒 飲衫首航：香港 (HKG) ➡️ 台北 (TPE)", "dep": "HKG", "arr": "TPE", "date": "2026-10-24", "morning_only": True},
+        {"id": "leg2", "name": "2. 🗼 東京度假：台北 (TPE) ➡️ 東京 (TYO)", "dep": "TPE", "arr": "TYO", "date": "2026-10-25", "morning_only": False},
+        {"id": "leg3", "name": "3. 🛍️ 凱旋回港：東京 (TYO) ➡️ 香港 (HKG)", "dep": "TYO", "arr": "HKG", "date": "2026-10-28", "morning_only": False}
+    ]
+    
+    total_trip_price = 0
+    trip_details = []
+    all_legs_success = True
+    
+    for leg in legs:
+        url = "https://serpapi.com/search"
+        params = {
+            "engine": "google_flights",
+            "departure_id": leg["dep"],
+            "arrival_id": leg["arr"],
+            "outbound_date": leg["date"],
+            "currency": "HKD",
+            "hl": "zh-tw",
+            "gl": "hk",
+            "type": "2", # 2 代表單程
+            "api_key": SERPAPI_KEY
+        }
+        
+        try:
+            response = requests.get(url, params=params).json()
+            flights = response.get("best_flights", []) + response.get("other_flights", [])
+            
+            leg_lowest = float('inf')
+            leg_best = None
+            
+            for f in flights:
+                # 嚴格篩選：10月24號去台北，強迫只要「日頭（16:00前出發）」嘅航班
+                if leg["morning_only"]:
+                    dep_time = f.get("flights", [{}])[0].get("departure_time", "")
+                    if "下午" in dep_time or "PM" in dep_time or "晚上" in dep_time:
+                        continue
+                
+                p = f.get("price")
+                if p and p < leg_lowest:
+                    leg_lowest = p
+                    leg_best = {
+                        "price": p,
+                        "airline": f.get("flights", [{}])[0].get("airline", "未知航空"),
+                        "dep_time": f.get("flights", [{}])[0].get("departure_time", "未知時間")
+                    }
+            
+            if leg_best:
+                total_trip_price += leg_best["price"]
+                trip_details.append(f"{leg['name']}\n💵 票價：{format_hkd(leg_best['price'])}\n⏰ 出發：{leg_best['dep_time']} ({leg_best['airline']})")
+            else:
+                all_legs_success = False
+                
+        except Exception as e:
+            print(f"查詢 {leg['name']} 失敗: {e}")
+            all_legs_success = False
+
+    if all_legs_success and total_trip_price > 0:
+        price_file = "last_price_taiwan_tokyo.txt"
+        old_total = None
+        if os.path.exists(price_file):
+            with open(price_file, "r") as f:
+                try: old_total = float(f.read().strip())
+                except: pass
+                
+        if old_total is None or total_trip_price < old_total:
+            with open(price_file, "w") as f:
+                f.write(str(total_trip_price))
+            
+            detail_text = "\n\n".join(trip_details)
+            if old_total is None:
+                msg = f"💒 🎉 10月台東雙城大連線特工首報！\n\n💰 三段總預算估計：{format_hkd(total_trip_price)}\n\n{detail_text}\n\n🕵️ 機械人已啟動「日頭飛台北」嚴格篩選，開始為你死守降價！"
+            else:
+                cheaper = old_total - total_trip_price
+                msg = f"🔥 💥 降價大震撼！！10月台東連線平咗 {format_hkd(cheaper)} 呀！\n\n📉 舊總價：{format_hkd(old_total)} ➡️ 🎉 新總價：{format_hkd(total_trip_price)}\n\n{detail_text}\n\n👉 快啲去搶飛湊拼圖！"
+            send_telegram(msg)
+        else:
+            print("台東連線總價未變或上升，保持安靜。")
 
 if __name__ == "__main__":
-    check_flights()
+    check_thailand()    # 泰國繼續跑 
+    check_taiwan_tokyo() # 東京新上線
