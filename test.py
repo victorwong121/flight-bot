@@ -24,8 +24,8 @@ THAI_AIRPORTS = ["BKK", "DMK"]
 # 任務 B：台北婚禮雙城連線（三段單程，全部直航）
 MULTI_CITY_SEGMENTS = [
     {"date": "2026-10-24", "from": "HKG", "to": "TPE", "daytime_only": True},
-    {"date": "2026-10-25", "from": "TPE", "to": "NRT", "daytime_only": False},
-    {"date": "2026-10-28", "from": "NRT", "to": "HKG", "daytime_only": False},
+    {"date": "2026-10-25", "from": "TPE", "to": "TYO", "daytime_only": False},
+    {"date": "2026-10-28", "from": "TYO", "to": "HKG", "daytime_only": False},
 ]
 
 
@@ -144,11 +144,68 @@ def fetch_oneway_direct(departure_id, arrival_id, outbound_date):
     return serpapi_request(params)
 
 
-def extract_lowest_flight(data, daytime_only=False):
+def fetch_oneway_with_fallback(departure_id, arrival_id, outbound_date):
+    strict_data = fetch_oneway_direct(departure_id, arrival_id, outbound_date)
+    strict_flights = strict_data.get("best_flights", []) + strict_data.get("other_flights", [])
+    if strict_flights:
+        return strict_data, False
+
+    print(
+        f"[任務B降級] {outbound_date} {departure_id}->{arrival_id} "
+        "使用 outbound_stops=0 無結果，改用寬鬆查詢再本地過濾直航。"
+    )
+    params = {
+        "engine": "google_flights",
+        "type": "2",
+        "departure_id": departure_id,
+        "arrival_id": arrival_id,
+        "outbound_date": outbound_date,
+        "currency": "HKD",
+        "hl": "zh-TW",
+        "api_key": SERPAPI_KEY,
+    }
+    return serpapi_request(params), True
+
+
+def is_direct_itinerary(item):
+    # 優先用顯式 stops 字段
+    if "stops" in item and to_number(item.get("stops")) == 0:
+        return True
+    if item.get("layovers"):
+        return False
+
+    flights = item.get("flights", [])
+    if not flights:
+        return False
+
+    # SerpApi 常見：多段 flights 通常即有轉機
+    if len(flights) > 1:
+        return False
+
+    first_flight = flights[0]
+    if "stops" in first_flight and to_number(first_flight.get("stops")) == 0:
+        return True
+
+    # 你指定的 legs 檢查邏輯（如 flights[0]["legs"][0]["stops"] == 0）
+    legs = first_flight.get("legs", [])
+    if legs:
+        for leg in legs:
+            if to_number(leg.get("stops", 0)) != 0:
+                return False
+        return True
+
+    # 無明確欄位時，保守以單段視作直航
+    return len(flights) == 1
+
+
+def extract_lowest_flight(data, daytime_only=False, enforce_direct=False):
     candidates = []
     flights = data.get("best_flights", []) + data.get("other_flights", [])
 
     for item in flights:
+        if enforce_direct and not is_direct_itinerary(item):
+            continue
+
         price_value = to_number(item.get("price"))
         if price_value is None:
             continue
@@ -280,21 +337,34 @@ def run_task_thailand():
 
 def run_task_taipei_tokyo_combo():
     segment_results = []
+    failures = []
 
     for seg in MULTI_CITY_SEGMENTS:
         try:
-            data = fetch_oneway_direct(seg["from"], seg["to"], seg["date"])
-            best = extract_lowest_flight(data, daytime_only=seg["daytime_only"])
+            data, used_fallback = fetch_oneway_with_fallback(seg["from"], seg["to"], seg["date"])
+            best = extract_lowest_flight(
+                data,
+                daytime_only=seg["daytime_only"],
+                enforce_direct=used_fallback,
+            )
             if not best:
-                print(f"[台北婚禮任務] {seg['date']} {seg['from']}->{seg['to']} 無符合條件直航。")
-                return
+                msg = f"[台北婚禮任務] {seg['date']} {seg['from']}->{seg['to']} 無符合條件直航。"
+                print(msg)
+                failures.append(msg)
+                continue
             best["date"] = seg["date"]
             best["from"] = seg["from"]
             best["to"] = seg["to"]
             segment_results.append(best)
         except Exception as exc:
-            print(f"[台北婚禮任務] {seg['date']} {seg['from']}->{seg['to']} 查詢失敗: {exc}")
-            return
+            msg = f"[台北婚禮任務] {seg['date']} {seg['from']}->{seg['to']} 查詢失敗: {exc}"
+            print(msg)
+            failures.append(msg)
+            continue
+
+    if failures:
+        print("[台北婚禮任務] 有航段失敗或無結果，本次不計算總價與不發送 Telegram。")
+        return
 
     total_price = sum(item["price_value"] for item in segment_results)
     price_file = SCRIPT_DIR / "last_price_taipeitokyo.txt"
