@@ -16,7 +16,7 @@ def send_telegram(msg):
     url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
     requests.post(url, json={"chat_id": CHAT_ID, "text": msg, "parse_mode": "Markdown"})
 
-# ==================== 任務 A：泰國曼谷（強行簡化發送） ====================
+# ==================== 任務 A：泰國曼谷（定時回報最低價） ====================
 def check_thailand():
     url = "https://serpapi.com/search"
     params = {
@@ -31,15 +31,15 @@ def check_thailand():
     except Exception as e:
         send_telegram(f"❌ 查泰國失敗: {e}")
 
-# ==================== 任務 B：台東單程（分拆上市，獨立發送！） ====================
-def check_taiwan_tokyo_independent():
+# ==================== 任務 B：台北婚禮單程（分拆獨立發送，確保絕不漏報！） ====================
+def check_taipei_tokyo_independent():
     legs = [
-        {"name": "1. 💒 香港 ➡️ 台北", "dep": "HKG", "arr": "TPE", "date": "2026-10-24"},
-        {"name": "2. 🗼 台北 ➡️ 東京", "dep": "TPE", "arr": "TYO", "date": "2026-10-25"},
-        {"name": "3. 🛍️ 東京 ➡️ 香港", "dep": "TYO", "arr": "HKG", "date": "2026-10-28"}
+        {"name": "1. 💒 飲衫首航：香港 ➡️ 台北", "dep": "HKG", "arr": "TPE", "date": "2026-10-24"},
+        {"name": "2. 🗼 東京度假：台北 ➡️ 東京", "dep": "TPE", "arr": "TYO", "date": "2026-10-25"},
+        {"name": "3. 🛍️ 凱旋回港：東京 ➡️ 香港", "dep": "TYO", "arr": "HKG", "date": "2026-10-28"}
     ]
     
-    send_telegram("🚀 💒 【10月台東婚禮特工】正在獨立為你查詢三段單程...")
+    send_telegram("🚀 💒 【10月台北婚禮特工】正在獨立為你查詢三段單程...")
     
     for leg in legs:
         url = "https://serpapi.com/search"
@@ -49,7 +49,7 @@ def check_taiwan_tokyo_independent():
             "arrival_id": leg["arr"],
             "outbound_date": leg["date"],
             "currency": "HKD", "hl": "zh-tw", "gl": "hk",
-            "type": "2", # 單程
+            "type": "2", # 2 代表單程
             "api_key": SERPAPI_KEY
         }
         try:
@@ -69,4 +69,4 @@ def check_taiwan_tokyo_independent():
 
 if __name__ == "__main__":
     check_thailand()
-    check_taiwan_tokyo_independent()
+    check_taipei_tokyo_independent()
