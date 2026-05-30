@@ -458,40 +458,435 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Animal Crossing style override (pastel, cozy, rounded)
+st.markdown("""
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+
+    :root {
+        --bg-cream: #FDF8F0;
+        --bg-cream-soft: #F9F5ED;
+        --card-white: #FFFFFF;
+        --accent-green-1: #A8D5BA;
+        --accent-green-2: #7EB89F;
+        --accent-green-3: #B8E0C8;
+        --accent-yellow: #F9E8C2;
+        --accent-peach: #F4D9C8;
+        --accent-blue: #B8D4E8;
+        --text-main: #5C4636;
+        --text-strong: #4A3728;
+        --btn-grad: linear-gradient(95deg, #A8D5BA 0%, #B8E0C8 52%, #F4D9C8 100%);
+        --btn-grad-strong: linear-gradient(95deg, #7EB89F 0%, #A8D5BA 50%, #F9E8C2 100%);
+        --border-soft: #E7D9C6;
+        --shadow-soft: 0 10px 24px rgba(146, 119, 87, 0.12);
+        --wood-grain: repeating-linear-gradient(
+            22deg,
+            rgba(177, 145, 108, 0.05) 0px,
+            rgba(177, 145, 108, 0.05) 3px,
+            rgba(255, 255, 255, 0.0) 3px,
+            rgba(255, 255, 255, 0.0) 10px
+        );
+        --paper-fiber: repeating-linear-gradient(
+            -32deg,
+            rgba(92, 70, 54, 0.03) 0px,
+            rgba(92, 70, 54, 0.03) 1px,
+            rgba(255, 255, 255, 0) 1px,
+            rgba(255, 255, 255, 0) 7px
+        );
+    }
+
+    .main, .stApp {
+        background-color: var(--bg-cream) !important;
+        background-image:
+            radial-gradient(circle at 8% 5%, rgba(184, 224, 200, 0.24) 0%, transparent 18%),
+            radial-gradient(circle at 92% 12%, rgba(249, 232, 194, 0.3) 0%, transparent 16%),
+            radial-gradient(circle at 18% 88%, rgba(184, 212, 232, 0.22) 0%, transparent 20%),
+            radial-gradient(circle at 88% 86%, rgba(244, 217, 200, 0.26) 0%, transparent 16%);
+        color: var(--text-main) !important;
+        font-family: 'Nunito', 'Fredoka', 'Segoe UI', sans-serif !important;
+    }
+
+    .block-container {
+        max-width: 1500px;
+        padding-top: 1.2rem;
+        padding-bottom: 2.8rem;
+    }
+
+    h1, h2, h3, h4, h5 {
+        color: var(--text-strong) !important;
+        font-family: 'Fredoka', 'Nunito', sans-serif !important;
+        letter-spacing: -0.02em;
+    }
+    p, li, span, label, small, .stCaption {
+        color: var(--text-main) !important;
+    }
+
+    section[data-testid="stSidebar"] > div {
+        background:
+            var(--paper-fiber),
+            linear-gradient(180deg, #F3ECE2 0%, #EFE6DA 100%) !important;
+        border-right: 1px solid #DCCDBB !important;
+    }
+    section[data-testid="stSidebar"] * {
+        color: var(--text-strong) !important;
+        font-weight: 700;
+    }
+
+    .hero-wrap {
+        background:
+            var(--paper-fiber),
+            linear-gradient(140deg, #FFFFFF 0%, #F9F5ED 100%) !important;
+        border: 2px solid var(--border-soft) !important;
+        border-radius: 28px !important;
+        box-shadow: var(--shadow-soft) !important;
+    }
+    .hero-kicker {
+        background: linear-gradient(90deg, var(--accent-green-3), var(--accent-yellow)) !important;
+        color: var(--text-strong) !important;
+        border: 1px solid #D8C7B1 !important;
+        border-radius: 999px !important;
+    }
+    .themed-title {
+        background: linear-gradient(90deg, #7EB89F, #A8D5BA, #B8D4E8, #F4D9C8) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        text-shadow: none !important;
+        font-size: clamp(2.7rem, 5.8vw, 4.5rem) !important;
+    }
+    .hero-sub {
+        color: var(--text-main) !important;
+        font-weight: 700;
+    }
+
+    .section-chip {
+        background: linear-gradient(90deg, var(--accent-green-3), var(--accent-yellow)) !important;
+        border: 1px solid #DCCDBB !important;
+        color: var(--text-strong) !important;
+        border-radius: 999px !important;
+    }
+    .section-title { color: var(--text-strong) !important; }
+    .section-desc, .micro-note, .login-sub { color: var(--text-main) !important; }
+
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div {
+        background: #FFFFFF !important;
+        border: 1.8px solid var(--border-soft) !important;
+        border-radius: 24px !important;
+        color: var(--text-strong) !important;
+    }
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus {
+        border-color: #A8D5BA !important;
+        box-shadow: 0 0 0 3px rgba(168, 213, 186, 0.26) !important;
+    }
+
+    .stButton > button {
+        border-radius: 999px !important;
+        border: none !important;
+        background: var(--btn-grad) !important;
+        color: #FFFFFF !important;
+        font-weight: 800 !important;
+        font-family: 'Fredoka', 'Nunito', sans-serif !important;
+        box-shadow: 0 8px 18px rgba(168, 213, 186, 0.35) !important;
+        transition: transform 0.18s cubic-bezier(.2,.8,.2,1), box-shadow 0.22s ease, filter 0.22s ease !important;
+    }
+    .stButton > button[kind="primary"] {
+        background: var(--btn-grad-strong) !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 10px 20px rgba(126, 184, 159, 0.35) !important;
+    }
+    .stButton > button:hover {
+        transform: translateY(-3px) scale(1.03) !important;
+        box-shadow: 0 14px 26px rgba(180, 146, 94, 0.26) !important;
+        filter: saturate(1.06);
+    }
+    .stButton > button:active {
+        transform: translateY(-1px) scale(0.99) !important;
+    }
+
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        background:
+            var(--paper-fiber),
+            var(--card-white) !important;
+        border: 2px solid var(--border-soft) !important;
+        border-radius: 26px !important;
+        box-shadow: var(--shadow-soft) !important;
+    }
+
+    .budget-card {
+        background:
+            var(--wood-grain),
+            linear-gradient(145deg, #FFFFFF 0%, #FAF6ED 100%) !important;
+        border: 2px solid var(--border-soft) !important;
+        border-left: 6px solid #A8D5BA !important;
+        border-radius: 26px !important;
+        box-shadow: 0 8px 16px rgba(146, 119, 87, 0.1) !important;
+    }
+    .budget-card .route { color: var(--text-strong) !important; }
+    .budget-card .price { color: #7EB89F !important; font-weight: 800 !important; }
+    .budget-card .detail { color: var(--text-main) !important; }
+
+    .tier-card {
+        background:
+            var(--paper-fiber),
+            linear-gradient(160deg, #FFFFFF 0%, #FAF6ED 100%) !important;
+        border: 2px solid var(--border-soft) !important;
+        border-radius: 26px !important;
+        box-shadow: 0 8px 16px rgba(146, 119, 87, 0.1) !important;
+    }
+    .tier-card.budget { border-top: 5px solid #A8D5BA !important; }
+    .tier-card.balance { border-top: 5px solid #B8D4E8 !important; }
+    .tier-card.luxury { border-top: 5px solid #F4D9C8 !important; }
+    .tier-title, .tier-subtitle, .tier-row .lbl, .tier-row .val { color: var(--text-strong) !important; }
+    .tier-badge.budget { background: rgba(168, 213, 186, 0.3) !important; color: #4A705A !important; }
+    .tier-badge.balance { background: rgba(184, 212, 232, 0.35) !important; color: #496479 !important; }
+    .tier-badge.luxury { background: rgba(244, 217, 200, 0.4) !important; color: #8A5D46 !important; }
+
+    .big-metric {
+        background:
+            var(--paper-fiber),
+            linear-gradient(165deg, #FFFFFF 0%, #FAF6ED 100%) !important;
+        border: 2px solid var(--border-soft) !important;
+        border-radius: 26px !important;
+    }
+    .big-metric .lbl, .big-metric .sub { color: var(--text-main) !important; }
+    .big-metric .val,
+    .big-metric.accent-blue .val {
+        background: linear-gradient(90deg, #7EB89F, #A8D5BA) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+    .big-metric.accent-pink .val {
+        background: linear-gradient(90deg, #D59F73, #C57E44) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+
+    .progress-wrap {
+        background:
+            var(--paper-fiber),
+            linear-gradient(145deg, #FFFFFF 0%, #F9F5ED 100%) !important;
+        border: 2px solid var(--border-soft) !important;
+        border-radius: 26px !important;
+    }
+    .progress-wrap .top .left { color: var(--text-main) !important; }
+    .progress-wrap .top .right {
+        background: linear-gradient(90deg, #7EB89F, #D5B079) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+    .progress-wrap .stProgress > div > div > div {
+        background: #EFE6D5 !important;
+        border-radius: 999px !important;
+    }
+    .progress-wrap .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, #A8D5BA, #B8E0C8, #F9E8C2) !important;
+        border-radius: 999px !important;
+    }
+
+    .per-person-banner {
+        background:
+            var(--paper-fiber),
+            linear-gradient(135deg, #FFFFFF 0%, #FAF6ED 100%) !important;
+        border: 2px solid var(--border-soft) !important;
+        border-left: 5px solid #A8D5BA !important;
+        border-radius: 26px !important;
+        color: var(--text-strong) !important;
+    }
+    .per-person-banner .ppb-main b { color: #5D8D75 !important; }
+    .per-person-banner .ppb-sub { color: var(--text-main) !important; }
+    .per-person-banner .ppb-amount {
+        background: linear-gradient(90deg, #7EB89F, #D5B079) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+    }
+
+    .treasurer-notice {
+        background:
+            var(--paper-fiber),
+            linear-gradient(135deg, #FFF8EA 0%, #F9E8C2 100%) !important;
+        border: 2px solid #E5CF9E !important;
+        border-left: 5px solid #D5B079 !important;
+        border-radius: 24px !important;
+        color: var(--text-strong) !important;
+    }
+    .treasurer-notice.unassigned {
+        background: linear-gradient(135deg, #FFF4EE 0%, #F4D9C8 100%) !important;
+        border-color: #E0B8A4 !important;
+    }
+    .photo-caption { color: var(--text-main) !important; }
+
+    .avatar-badge {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 58px;
+        height: 58px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #EAF7EF, #F9E8C2);
+        border: 2px solid #DCCDBB;
+        font-size: 1.7rem;
+        box-shadow: 0 6px 12px rgba(146, 119, 87, 0.12);
+    }
+
+    /* Cozy rhythm + stronger Animal Crossing visual language */
+    .hero-wrap,
+    div[data-testid="stVerticalBlockBorderWrapper"],
+    .budget-card,
+    .tier-card,
+    .big-metric,
+    .progress-wrap,
+    .per-person-banner,
+    .treasurer-notice {
+        border-radius: 26px !important;
+        box-shadow:
+            0 12px 28px rgba(146, 119, 87, 0.12),
+            0 2px 0 rgba(255, 255, 255, 0.55) inset !important;
+    }
+
+    div[data-testid="stVerticalBlockBorderWrapper"] {
+        padding: 1.24rem 1.16rem !important;
+        margin-bottom: 1.02rem !important;
+    }
+
+    .section-header {
+        margin-bottom: 1rem !important;
+        padding-bottom: 0.54rem;
+        border-bottom: 1px dashed rgba(164, 136, 104, 0.32);
+    }
+    .section-title {
+        margin-top: 0.16rem !important;
+        margin-bottom: 0.18rem !important;
+    }
+    .section-desc,
+    .micro-note {
+        line-height: 1.62;
+    }
+
+    .stButton > button {
+        min-height: 46px;
+        border-radius: 999px !important;
+    }
+    @keyframes ac-bounce {
+        0% { transform: translateY(0) scale(1); }
+        45% { transform: translateY(-4px) scale(1.04); }
+        72% { transform: translateY(-2px) scale(1.02); }
+        100% { transform: translateY(-3px) scale(1.03); }
+    }
+    .stButton > button:hover {
+        animation: ac-bounce 0.34s ease-out both;
+        filter: saturate(1.08);
+    }
+
+    .ai-subsection-title {
+        font-family: 'Fredoka', 'Nunito', sans-serif;
+        font-weight: 700;
+        color: var(--text-strong);
+        letter-spacing: 0.01em;
+        margin: 0.1rem 0 0.56rem;
+        padding: 0.18rem 0.12rem;
+    }
+    .ai-mini-divider {
+        height: 1px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, rgba(168, 213, 186, 0.6), rgba(212, 188, 154, 0.36), transparent);
+        margin: 0.66rem 0 0.78rem;
+    }
+    div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] p,
+    div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] li {
+        line-height: 1.78;
+        letter-spacing: 0.005em;
+        font-size: 0.96rem;
+        color: var(--text-main) !important;
+    }
+    div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] h1,
+    div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] h2,
+    div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] h3,
+    div[data-testid="stVerticalBlockBorderWrapper"] div[data-testid="stMarkdownContainer"] h4 {
+        margin-top: 0.64rem;
+        margin-bottom: 0.38rem;
+        color: var(--text-strong) !important;
+    }
+    .ai-photo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.72rem;
+    }
+    .ai-photo-grid > .ai-photo-card:first-child:nth-last-child(n+3) {
+        grid-column: 1 / -1;
+    }
+    .ai-photo-card {
+        background:
+            var(--paper-fiber),
+            linear-gradient(140deg, #FFFFFF 0%, #F7F1E7 100%);
+        border: 2px solid var(--border-soft);
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 8px 16px rgba(146, 119, 87, 0.11);
+    }
+    .ai-photo-card img {
+        width: 100%;
+        aspect-ratio: 5 / 3;
+        object-fit: cover;
+        display: block;
+    }
+    .photo-caption {
+        margin: 0 !important;
+        padding: 0.5rem 0.65rem 0.6rem;
+        color: #755844 !important;
+        font-size: 0.82rem;
+        font-weight: 700;
+        background: linear-gradient(180deg, rgba(255, 250, 241, 0.9), rgba(252, 244, 230, 0.96));
+        border-top: 1px dashed rgba(164, 136, 104, 0.3);
+    }
+</style>
+""", unsafe_allow_html=True)
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 # DYNAMIC THEME ENGINE
 # ══════════════════════════════════════════════════════════════════════════════
 THEMES = {
-    "🏕️ 動森大地色 (Default)": {
-        "bg_grad": "radial-gradient(circle at 10% -18%, #124238 0%, #0b141f 46%, #080f18 100%)",
-        "card_grad": "linear-gradient(155deg, #102325 0%, #172a32 100%)",
-        "input_bg": "#102126",
-        "input_border": "#205354",
-        "accent_primary": "#00d4a5",
-        "accent_warm": "#ff9500",
-        "title_grad": "linear-gradient(90deg, #00d4a5, #35e7bf, #ff9500)",
-        "button_grad": "linear-gradient(100deg, #00d4a5 0%, #25d7b1 55%, #ff9500 100%)",
+    "🌸 春櫻小島": {
+        "bg_grad": "radial-gradient(circle at 14% -8%, #FFF9F4 0%, #FDF8F0 46%, #F7EFE3 100%)",
+        "card_grad": "linear-gradient(150deg, #FFFFFF 0%, #FFF7F2 100%)",
+        "input_bg": "#FFFFFF",
+        "input_border": "#E7D6C9",
+        "accent_primary": "#B8E0C8",
+        "accent_warm": "#F4D9C8",
+        "title_grad": "linear-gradient(90deg, #7EB89F, #B8E0C8, #F4D9C8)",
+        "button_grad": "linear-gradient(95deg, #B8E0C8 0%, #CFE9D9 52%, #F4D9C8 100%)",
     },
-    "🌸 東京櫻花粉": {
-        "bg_grad": "radial-gradient(circle at 12% -20%, #173f31 0%, #111b22 52%, #0c1319 100%)",
-        "card_grad": "linear-gradient(155deg, #102926 0%, #18342f 100%)",
-        "input_bg": "#132722",
-        "input_border": "#2a5f50",
-        "accent_primary": "#00d4a5",
-        "accent_warm": "#ffa122",
-        "title_grad": "linear-gradient(90deg, #00e2ad, #3ae9c2, #ffad2f)",
-        "button_grad": "linear-gradient(100deg, #00d4a5 0%, #30e3ba 52%, #ff9f1a 100%)",
+    "🌿 夏葉小島": {
+        "bg_grad": "radial-gradient(circle at 14% -10%, #FDF8F0 0%, #F9F5ED 45%, #F2EBDD 100%)",
+        "card_grad": "linear-gradient(150deg, #FFFFFF 0%, #F9F5ED 100%)",
+        "input_bg": "#FFFFFF",
+        "input_border": "#E3D5C5",
+        "accent_primary": "#A8D5BA",
+        "accent_warm": "#F9E8C2",
+        "title_grad": "linear-gradient(90deg, #7EB89F, #A8D5BA, #F9E8C2)",
+        "button_grad": "linear-gradient(95deg, #A8D5BA 0%, #B8E0C8 52%, #F9E8C2 100%)",
     },
-    "🌊 冰島極光藍": {
-        "bg_grad": "radial-gradient(circle at 14% -18%, #0f3f35 0%, #0a1a1f 48%, #070f14 100%)",
-        "card_grad": "linear-gradient(155deg, #112b27 0%, #173733 100%)",
-        "input_bg": "#0e2722",
-        "input_border": "#2d5f52",
-        "accent_primary": "#00d4a5",
-        "accent_warm": "#ff9500",
-        "title_grad": "linear-gradient(90deg, #19e9ba, #6cf2cd, #ffad3a)",
-        "button_grad": "linear-gradient(100deg, #00d4a5 0%, #32e1ba 52%, #ff9500 100%)",
+    "🍂 秋葉廣場": {
+        "bg_grad": "radial-gradient(circle at 14% -8%, #FDF8F0 0%, #FAF1E3 45%, #F5E8D3 100%)",
+        "card_grad": "linear-gradient(150deg, #FFFFFF 0%, #FBF1DF 100%)",
+        "input_bg": "#FFFFFF",
+        "input_border": "#E7D4BA",
+        "accent_primary": "#B8E0C8",
+        "accent_warm": "#D9B589",
+        "title_grad": "linear-gradient(90deg, #7EB89F, #B8E0C8, #D9B589)",
+        "button_grad": "linear-gradient(95deg, #B8E0C8 0%, #F9E8C2 52%, #D9B589 100%)",
+    },
+    "❄️ 冬雪海邊": {
+        "bg_grad": "radial-gradient(circle at 14% -8%, #FBFCFD 0%, #F4F7FA 46%, #ECF1F5 100%)",
+        "card_grad": "linear-gradient(150deg, #FFFFFF 0%, #F3F7FB 100%)",
+        "input_bg": "#FFFFFF",
+        "input_border": "#D6E1E8",
+        "accent_primary": "#B8D4E8",
+        "accent_warm": "#F9E8C2",
+        "title_grad": "linear-gradient(90deg, #8FB2CF, #B8D4E8, #F9E8C2)",
+        "button_grad": "linear-gradient(95deg, #B8D4E8 0%, #D2E4F1 52%, #F9E8C2 100%)",
     },
 }
 
@@ -518,7 +913,7 @@ def inject_theme(theme_key: str):
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# GEMINI PROMPT
+# AI PROMPT
 # ══════════════════════════════════════════════════════════════════════════════
 SYSTEM_CONTEXT = """你係一個香港本地旅遊 AI 特工，專門幫香港人規劃機票行程。
 你識用香港人日常用語同廣東話口語，例如：正呀喂、chur、平靚正、搞掂、唔洗問、掃嘢、食番啖好嘢等。
@@ -771,15 +1166,21 @@ def render_ai_photo_gallery(text: str):
     keywords = extract_photo_keywords(text)
     if not keywords:
         return
-    st.markdown("##### 📸 旅程配圖")
-    for kw in keywords:
-        seed = re.sub(r"[^a-z0-9-]+", "-", kw.lower().replace(" ", "-")).strip("-")
-        image_url = f"https://picsum.photos/seed/{seed}/960/600"
-        st.image(image_url, use_container_width=True)
-        st.markdown(
-            f"<div class='photo-caption'>#{kw.replace('-', ' ')}</div>",
-            unsafe_allow_html=True,
+    cards = []
+    for kw in keywords[:4]:
+        slug = re.sub(r"[^a-z0-9-]+", "-", kw.lower().replace(" ", "-")).strip("-")
+        label = kw.replace("-", " ")
+        cards.append(
+            f"""
+<article class="ai-photo-card">
+  <img src="https://picsum.photos/seed/{slug}/1000/640" alt="travel photo {label}" loading="lazy">
+  <div class="photo-caption">#{label} ｜ 行程靈感相片</div>
+</article>
+"""
         )
+
+    st.markdown("<div class='ai-subsection-title'>📸 靈感相簿</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='ai-photo-grid'>{''.join(cards)}</div>", unsafe_allow_html=True)
 
 
 # Visual config for the 3 tier columns (in display order)
@@ -871,12 +1272,19 @@ def add_flight(label: str, price_hkd: int, detail: str):
 # SIDEBAR
 # ══════════════════════════════════════════════════════════════════════════════
 selected_theme = st.sidebar.selectbox(
-    "🎨 選擇介面主題",
+    "🎨 動森四季主題",
     options=list(THEMES.keys()),
     index=0,
     key="ui_theme",
 )
 inject_theme(selected_theme)
+SEASON_HINTS = {
+    "🌸 春櫻小島": "🌸 今日島上微風櫻花雨，最啱慢慢規劃旅程。",
+    "🌿 夏葉小島": "🌿 今日陽光正好，集合啦一齊儲鈴錢！",
+    "🍂 秋葉廣場": "🍂 今日落葉滿地，最適合同朋友傾旅行大計。",
+    "❄️ 冬雪海邊": "❄️ 今日海風微涼，暖笠笠咁慢慢計劃下一站。",
+}
+st.sidebar.caption(SEASON_HINTS.get(selected_theme, ""))
 st.sidebar.divider()
 
 if st.session_state.current_user:
@@ -896,8 +1304,8 @@ if not st.session_state.current_user:
     st.markdown(
         "<div class='hero-wrap'>"
         "<span class='hero-kicker'>👋 Welcome</span>"
-        "<h1 class='themed-title'>✈️ 出發啦</h1>"
-        "<p class='hero-sub'>輸入邀請碼同暱稱，即刻加入你哋嘅旅行基金。</p>"
+        "<h1 class='themed-title'>🦝🌿 出發啦</h1>"
+        "<p class='hero-sub'>輸入邀請碼同暱稱，集合啦！即刻加入你哋嘅旅行基金。</p>"
         "</div>",
         unsafe_allow_html=True,
     )
@@ -908,8 +1316,8 @@ if not st.session_state.current_user:
             st.markdown(
                 "<div class='section-header login-wrap'>"
                 "<span class='section-chip'>Join Fund</span>"
-                "<h3 class='section-title'>登入旅行基金</h3>"
-                "<p class='login-sub'>同隊友共用同一個邀請碼，即可同步大家儲蓄進度。</p>"
+                "<h3 class='section-title'>登入旅行基金大堂</h3>"
+                "<p class='login-sub'>同隊友共用同一個邀請碼，集合啦！即時同步大家儲蓄進度。</p>"
                 "</div>",
                 unsafe_allow_html=True,
             )
@@ -923,7 +1331,7 @@ if not st.session_state.current_user:
                 placeholder="例：阿明 / 阿強 / 阿珍",
                 key="login_nickname",
             )
-            st.caption("如果暱稱是「財政大佬」或使用特別邀請碼，會啟用管理模式。")
+            st.caption("如果暱稱是「財政大佬」或使用特別邀請碼，會啟用島主級管理模式。")
             if st.button("進入旅行基金", type="primary", use_container_width=True):
                 code_clean = share_code.strip()
                 nickname_clean = nickname.strip()
@@ -974,13 +1382,13 @@ for i, item in enumerate(st.session_state.budget_data):
 total_budget = sum(f["price_hkd"] for f in st.session_state.budget_data)
 flight_count = len(st.session_state.budget_data)
 st.sidebar.markdown(
-    f"**總預算使用：** `HKD {total_budget:,}`　**｜**　**已記錄行程：** {flight_count} 條"
+    f"**總預算使用（鈴錢/HKD）：** `HKD {total_budget:,}`　**｜**　**已記錄行程：** {flight_count} 條"
 )
 
 with st.sidebar.expander("➕ 新增航班", expanded=False):
     new_label = st.text_input("航班名稱／描述", placeholder="例：11月首爾行", key="new_flight_label")
     new_price = st.number_input(
-        "價格 (HKD)", min_value=0, max_value=500_000, value=0, step=100, key="new_flight_price"
+        "價格 (HKD / 鈴錢)", min_value=0, max_value=500_000, value=0, step=100, key="new_flight_price"
     )
     new_detail = st.text_input(
         "補充說明（可選）", placeholder="例：香港快運 HKG→ICN", key="new_flight_detail"
@@ -1001,17 +1409,20 @@ deepseek_model = st.sidebar.selectbox(
     index=0,
     help="預設用較平嘅 flash 模型；如帳號未開通可改用 deepseek-chat。",
 )
-deepseek_key = st.sidebar.text_input(
-    "輸入你的 DeepSeek API Key：",
-    type="password",
-    help="可於 https://platform.deepseek.com 取得 API Key",
-)
+
+secret_key_name = "sk-447611d829084efc8e62a1666add652e"
+deepseek_key = ""
+try:
+    deepseek_key = str(st.secrets[secret_key_name])
+except Exception:
+    deepseek_key = str(st.secrets.get("DEEPSEEK_API_KEY", ""))
+
 st.sidebar.caption("💡 DeepSeek 通常更平，而且香港用家多數唔使 VPN。")
 st.sidebar.caption("安裝套件：`pip install openai`")
 if deepseek_key:
-    st.sidebar.success("✅ DeepSeek API Key 已載入")
+    st.sidebar.success("✅ DeepSeek API Key 已由 secrets 自動載入")
 else:
-    st.sidebar.caption("_尚未輸入 API Key，AI 功能暫停。_")
+    st.sidebar.warning("⚠️ 未偵測到 DeepSeek key，請於 secrets 設定。")
 
 current_user = st.session_state.current_user
 current_pool = st.session_state.team_pools[current_user["share_code"]]
@@ -1023,8 +1434,8 @@ current_pool = st.session_state.team_pools[current_user["share_code"]]
 st.markdown(
     "<div class='hero-wrap'>"
     "<span class='hero-kicker'>🔥 HK Friends Travel Savings</span>"
-    "<h1 class='themed-title'>✈️ 出發啦</h1>"
-    "<p class='hero-sub'>同班Friend一齊儲旅費、揀方案、即刻搞掂下一轉旅行計劃。</p>"
+    "<h1 class='themed-title'>🦝🌿 出發啦</h1>"
+    "<p class='hero-sub'>同班Friend集合啦！一齊儲旅費（鈴錢 HKD）、揀方案、即刻搞掂下一轉旅行計劃。</p>"
     "</div>",
     unsafe_allow_html=True,
 )
@@ -1039,7 +1450,7 @@ with left_col:
             "<div class='section-header'>"
             "<span class='section-chip'>AI Planning</span>"
             "<h3 class='section-title'>💬 AI 行程規劃室</h3>"
-            "<p class='section-desc'>輸入目的地或旅程目標，AI 會即時生成行程同三檔預算方案。</p>"
+            "<p class='section-desc'>輸入目的地或旅程目標，AI 會即時生成行程同三檔預算方案，隊友集合啦！</p>"
             "</div>",
             unsafe_allow_html=True,
         )
@@ -1064,7 +1475,7 @@ with left_col:
         if not user_input.strip():
             st.warning("⚠️ 請先輸入你的行程需求！")
         elif not deepseek_key.strip():
-            st.error("🔑 請先喺左側 Sidebar 貼入你的 DeepSeek API Key！")
+            st.error("🔑 未讀取到 DeepSeek API Key，請先設定 `st.secrets`。")
         else:
             with st.spinner("幫緊你、幫緊你..."):
                 try:
@@ -1092,7 +1503,7 @@ with left_col:
                 "<div class='section-header'>"
                 "<span class='section-chip'>AI Result</span>"
                 "<h3 class='section-title'>🎯 你的專屬智能行程提案</h3>"
-                "<p class='section-desc'>可直接揀其中一檔預算，一鍵同步到右邊基金目標。</p>"
+                "<p class='section-desc'>可直接揀其中一檔預算，一鍵同步到右邊基金鈴錢目標。</p>"
                 "</div>",
                 unsafe_allow_html=True,
             )
@@ -1101,12 +1512,16 @@ with left_col:
                 with st.container(border=True):
                     text_col, photo_col = st.columns([3, 2], gap="medium")
                     with text_col:
+                        st.markdown("<div class='ai-subsection-title'>📝 行程建議重點</div>", unsafe_allow_html=True)
+                        st.markdown("<div class='ai-mini-divider'></div>", unsafe_allow_html=True)
                         st.markdown(st.session_state.last_ai_text)
                     with photo_col:
+                        st.markdown("<div class='ai-mini-divider'></div>", unsafe_allow_html=True)
                         render_ai_photo_gallery(st.session_state.last_ai_text)
 
             if st.session_state.last_tiers:
-                st.markdown("##### 💎 三檔預算方案")
+                st.markdown("<div class='ai-subsection-title'>💎 三檔預算方案</div>", unsafe_allow_html=True)
+                st.markdown("<div class='ai-mini-divider'></div>", unsafe_allow_html=True)
                 cols = st.columns(3, gap="medium")
                 for col, tier, style in zip(
                     cols, st.session_state.last_tiers[:3], TIER_STYLES
@@ -1135,10 +1550,10 @@ with left_col:
             m1.metric("AI 引擎", f"DeepSeek ({deepseek_model})")
             m2.metric("預算庫行程", f"{len(st.session_state.budget_data)} 條")
             m3.metric(
-                "總預算",
+                "總預算（鈴錢）",
                 f"HKD {sum(f['price_hkd'] for f in st.session_state.budget_data):,}",
             )
-            st.caption("_以上行程由 DeepSeek AI 根據你的預算庫即時生成，可隨時調整。_")
+            st.caption("_以上行程由 DeepSeek AI 根據你的預算庫即時生成，可隨時調整，開團更輕鬆。_")
 
 
 # ── RIGHT: Savings Pool ───────────────────────────────────────────────────────
@@ -1148,13 +1563,13 @@ with right_col:
             "<div class='section-header'>"
             "<span class='section-chip'>Fund Setup</span>"
             "<h3 class='section-title'>🎯 旅遊目標基金設定</h3>"
-            "<p class='section-desc'>設定今次旅程總目標金額，配合 AI 方案可一鍵套用。</p>"
+            "<p class='section-desc'>設定今次旅程總目標金額（鈴錢 / HKD），配合 AI 方案可一鍵套用。</p>"
             "</div>",
             unsafe_allow_html=True,
         )
 
         target_budget = st.number_input(
-            "目標總預算 (HKD)",
+            "目標總預算（HKD / 鈴錢）",
             min_value=0,
             max_value=500_000,
             step=500,
@@ -1167,7 +1582,7 @@ with right_col:
             "<div class='section-header'>"
             "<span class='section-chip'>Team Savings</span>"
             "<h3 class='section-title'>👥 旅行者儲蓄情況</h3>"
-            "<p class='section-desc'>顯示同組所有隊友進度；一般模式只可修改自己金額。</p>"
+            "<p class='section-desc'>顯示同組所有隊友進度；一般模式只可修改自己金額，集合啦一齊儲鈴錢。</p>"
             "</div>",
             unsafe_allow_html=True,
         )
@@ -1190,7 +1605,10 @@ with right_col:
                 col_avatar, col_name, col_amount, col_role = st.columns([1.5, 2.8, 2.1, 2.6], gap="small")
                 with col_avatar:
                     avatar = member_data.get("avatar", "🧳")
-                    st.markdown(f"### {avatar}")
+                    st.markdown(
+                        f"<div class='avatar-badge'>{avatar}</div>",
+                        unsafe_allow_html=True,
+                    )
                 with col_name:
                     st.markdown(
                         f"**{member_name}**"
@@ -1246,7 +1664,7 @@ with right_col:
             "<div class='section-header'>"
             "<span class='section-chip'>Fund Status</span>"
             "<h3 class='section-title'>📈 基金達成情況</h3>"
-            "<p class='section-desc'>即時睇到團隊儲蓄進度、每人目標同財政大臣狀態。</p>"
+            "<p class='section-desc'>即時睇到團隊鈴錢進度、每人目標同財政大臣狀態。</p>"
             "</div>",
             unsafe_allow_html=True,
         )
@@ -1282,7 +1700,7 @@ with right_col:
         st.markdown(
             f'<div class="per-person-banner">'
             f'<div class="ppb-main">⚖️ <b>隊友平分預算：</b>每人平均需儲 '
-            f'<span class="ppb-amount">HKD {per_person_target:,.0f}</span></div>'
+            f'<span class="ppb-amount">HKD {per_person_target:,.0f}</span>（鈴錢）</div>'
             f'<div class="ppb-sub">👥 {roster}</div>'
             f'</div>',
             unsafe_allow_html=True,
@@ -1324,7 +1742,7 @@ with right_col:
             "<div class='section-header'>"
             "<span class='section-chip'>Team Detail</span>"
             "<h3 class='section-title'>🧾 隊友儲蓄明細</h3>"
-            "<p class='section-desc'>逐位隊友查看個人進度，方便分工同追數。</p>"
+            "<p class='section-desc'>逐位隊友查看個人進度，方便分工同追數，聚會前一眼睇晒。</p>"
             "</div>",
             unsafe_allow_html=True,
         )
